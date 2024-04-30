@@ -1,1 +1,215 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="viewport" content="height=device-height,initial-scale=1"><title>Cloud TextStore</title><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet"><link rel="icon" href="https://avatars.githubusercontent.com/u/91538017?v=4?s=400"><style>*{font-family:"Roboto Slab",serif}#div{border:none;position:absolute;left:10px;right:10px;bottom:10px;top:10px;padding:10px}#textarea{width:90%;height:fit-content;border:1px solid #000;border-radius:20px;padding:20px;resize:none}#loginButton,#logoutButton,#signupButton{border:1px solid #000;padding:20px;width:24%;height:10%;background-color:#fff}#deleteAccountButton:hover,#loginButton:hover,#logoutButton:hover,#signupButton:hover{background-color:#000;color:#fff}#deleteAccountButton{display:none;position:absolute;top:0;right:0;border:1px solid #000;padding:9px;background-color:#fff;z-index:999;width:fit-content}#pp{position:absolute;bottom:0;left:0;font-size:13px;left:5px}</style></head><body><center><div id="div"><center><h1>Cloud TextStore</h1><p>signup with a email and password and enter data into the textbox after login, now the data will be accessible from any device across the world for your account<br><br>you can use Cloud TextStore to send text easily across devices or just store data u want to remember later</p><button id="loginButton">Login</button><br><br><button id="signupButton">Sign Up</button><button id="logoutButton" style="display:none">Logout</button><br><button id="deleteAccountButton">Delete Account</button><br><br><textarea id="textarea" style="display:none" placeholder="Enter The Data You Need To Store"></textarea></center></div></center><p id="pp">created by<a href="https://github.com">CloudGlitch</a></p><script>const firebaseConfig={apiKey:"AIzaSyB-RJBDMwrali2-E1zPAimnFgCqIZK8Tbw",authDomain:"cloudglitch-textstore.firebaseapp.com",projectId:"cloudglitch-textstore",storageBucket:"cloudglitch-textstore.appspot.com",messagingSenderId:"681860712920",appId:"1:681860712920:web:bab824d1977bcafab48aad"};firebase.initializeApp(firebaseConfig);const auth=firebase.auth(),database=firebase.database(),loginButton=document.getElementById("loginButton"),logoutButton=document.getElementById("logoutButton"),textarea=document.getElementById("textarea");loginButton.addEventListener("click",(()=>{const t=prompt("Enter your email"),e=prompt("Enter your password");t&&e&&auth.signInWithEmailAndPassword(t,e).then((()=>{textarea.style.display="block",loginButton.style.display="none",logoutButton.style.display="block",deleteAccountButton.style.display="block";const t=database.ref(`users/${auth.currentUser.uid}`);textarea.addEventListener("input",(()=>{t.set({input:textarea.value})}))})).catch((t=>{"auth/user-not-found"===t.code||t.code,alert("The email or password is incorrect. Please try again.")}))}));const deleteAccountButton=document.getElementById("deleteAccountButton");function deleteAccount(){if(auth.currentUser){database.ref(`users/${auth.currentUser.uid}`).remove().then((()=>{auth.currentUser.delete().then((()=>{alert("User account and data deleted"),window.location.reload()})).catch((t=>{alert("error, try again or try again after logging out and logging back in"),window.location.reload()}))})).catch((t=>{console.log(t)}))}else console.log("No user is currently signed in")}deleteAccountButton.addEventListener("click",(()=>{deleteAccount()})),logoutButton.addEventListener("click",(()=>{auth.signOut().then((()=>{textarea.style.display="none",loginButton.style.display="block",signupButton.style.display="block",logoutButton.style.display="none"})).catch((t=>{console.log(t)}))}));const signupButton=document.getElementById("signupButton");signupButton.addEventListener("click",(()=>{const t=prompt("Enter your email"),e=prompt("Enter your password");t&&e&&auth.createUserWithEmailAndPassword(t,e).then((t=>{const e=t.user;console.log("User created with email: "+e.email)})).catch((t=>{console.log(t)}))}));const userRef=database.ref(`users/${auth.currentUser?auth.currentUser.uid:""}`);auth.onAuthStateChanged((t=>{if(t){textarea.style.display="block",loginButton.style.display="none",signupButton.style.display="none",logoutButton.style.display="block",deleteAccountButton.style.display="block";database.ref(`users/${t.uid}`).on("value",(t=>{const e=t.val();e&&e.input&&(textarea.value=e.input)}))}else textarea.style.display="none",loginButton.style.display="block",logoutButton.style.display="none"}));</script></body></html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="height=device-height, initial-scale=1.0">
+    <title>Cloud TextStore</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/91538017?v=4?s=400">
+    <style>
+        * {
+            font-family: "Roboto Slab" , serif;
+        }
+       #div {
+        border:none;
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        top: 10px;
+        padding: 10px;
+       }
+       #textarea {
+        width: 90%;
+        height: fit-content;
+        border: 1px solid black;
+        border-radius: 20px;
+        padding: 20px;
+        resize: none;
+       }
+       #loginButton, #signupButton, #logoutButton {
+        border: 1px solid black;
+        padding: 20px;
+        width: 24%;
+        height: 10%;
+        background-color: #fff;
+       }
+       #loginButton:hover, #signupButton:hover, #logoutButton:hover,#deleteAccountButton:hover {
+        background-color: #000;
+        color:#fff;
+       }
+       #deleteAccountButton {
+        display: none;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        border: 1px solid black;
+        padding: 9px;
+        background-color: #fff;
+        z-index: 999;
+        width: fit-content;
+       }
+       #pp {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        font-size: 13px;
+        left: 5px;
+       }
+    </style>
+  </head>
+  <body>
+    <center>
+    <div id="div"><center>
+    <h1>Cloud TextStore</h1>
+    <p>signup with a email and password and enter data into the textbox after login, now the data will be accessible from any device across the world for your account <br><br>
+    you can use Cloud TextStore to send text easily across devices or just store data u want to remember later</p>
+    <button id="loginButton">Login</button><br><br>
+    <button id="signupButton">Sign Up</button>
+    <button id="logoutButton" style="display:none;">Logout</button><br>
+    <button id="deleteAccountButton">Delete Account</button><br><br>
+    <textarea id="textarea" style="display:none;" placeholder="Enter The Data You Need To Store"></textarea>
+</center>
+    </div>
+    </center>
+    <p id="pp">created by <a href="https://github.com">CloudGlitch</a></p>
+    <script>
+        const firebaseConfig = {
+
+          apiKey: "AIzaSyB-RJBDMwrali2-E1zPAimnFgCqIZK8Tbw",
+    authDomain: "cloudglitch-textstore.firebaseapp.com",
+    projectId: "cloudglitch-textstore",
+    storageBucket: "cloudglitch-textstore.appspot.com",
+    messagingSenderId: "681860712920",
+    appId: "1:681860712920:web:bab824d1977bcafab48aad"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const database = firebase.database();
+
+const loginButton = document.getElementById('loginButton');
+const logoutButton = document.getElementById('logoutButton');
+const textarea = document.getElementById('textarea');
+
+loginButton.addEventListener('click', () => {
+  const email = prompt('Enter your email');
+  const password = prompt('Enter your password');
+
+  if (email && password) {
+    auth.signInWithEmailAndPassword(email, password)
+   .then(() => {
+        textarea.style.display = 'block';
+        loginButton.style.display = 'none';
+        logoutButton.style.display = 'block';
+        deleteAccountButton.style.display = "block";
+        // Save the user's input to Firebase Database
+        const userRef = database.ref(`users/${auth.currentUser.uid}`);
+        textarea.addEventListener('input', () => {
+          userRef.set({ input: textarea.value });
+        });
+      })
+   .catch((error) => {
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          alert('The email or password is incorrect. Please try again.');
+        } else {
+          alert('The email or password is incorrect. Please try again.');
+        }
+      });
+  }
+});
+
+const deleteAccountButton = document.getElementById('deleteAccountButton');
+
+function deleteAccount() {
+  if (auth.currentUser) {
+    const userRef = database.ref(`users/${auth.currentUser.uid}`);
+    userRef.remove()
+   .then(() => {
+      auth.currentUser.delete()
+    .then(() => {
+          alert('User account and data deleted');
+          window.location.reload();
+        })
+    .catch((error) => {
+          alert("error, try again or try again after logging out and logging back in");
+          window.location.reload();
+        });
+    })
+   .catch((error) => {
+      console.log(error);
+    });
+  } else {
+    console.log('No user is currently signed in');
+  }
+}
+
+deleteAccountButton.addEventListener('click', () => {
+  deleteAccount();
+});
+
+logoutButton.addEventListener('click', () => {
+  auth.signOut()
+   .then(() => {
+      textarea.style.display = 'none';
+      loginButton.style.display = 'block';
+      signupButton.style.display = 'block';
+      logoutButton.style.display = 'none';
+    })
+   .catch((error) => {
+      console.log(error);
+    });
+});
+
+const signupButton = document.getElementById('signupButton');
+
+signupButton.addEventListener('click', () => {
+  const email = prompt('Enter your email');
+  const password = prompt('Enter your password');
+
+  if (email && password) {
+    auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+        const user = userCredential.user;
+        console.log('User created with email: ' + user.email);
+      })
+    .catch((error) => {
+        console.log(error);
+      });
+  }
+});
+
+const userRef = database.ref(`users/${auth.currentUser? auth.currentUser.uid : ''}`);
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    // The user is logged in, so show the textarea and retrieve the user's input from Firebase Database
+    textarea.style.display = 'block';
+    loginButton.style.display = 'none';
+    signupButton.style.display = 'none';
+    logoutButton.style.display = 'block';
+    deleteAccountButton.style.display = 'block';
+    const userRef = database.ref(`users/${user.uid}`);
+    userRef.on('value', snapshot => {
+      const data = snapshot.val();
+      if (data && data.input) {
+        textarea.value = data.input;
+      }
+    });
+  } else {
+    // The user is not logged in, so hide the textarea and show the login button
+    textarea.style.display = 'none';
+    loginButton.style.display = 'block';
+    logoutButton.style.display = 'none';
+  }
+});
+    </script>
+  </body>
+</html>
